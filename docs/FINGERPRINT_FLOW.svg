@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1117"/>
+      <stop offset="100%" style="stop-color:#1a1d2e"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6b7280"/>
+    </marker>
+    <marker id="arrGold" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="480" fill="url(#bg)"/>
+  <text x="450" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#f1f5f9">LSCH Fingerprint Construction Flow</text>
+  <text x="450" y="46" text-anchor="middle" font-size="10" fill="#64748b">Locality-Sensitive Cryptographic Hashing on Canonical Fragment Multisets</text>
+
+  <!-- Step 1: Fragments in -->
+  <rect x="20" y="70" width="160" height="300" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="100" y="92" text-anchor="middle" font-size="11" font-weight="bold" fill="#94a3b8">Fragment Set</text>
+  <text x="100" y="108" text-anchor="middle" font-size="9" fill="#475569">(output of fragment-engine)</text>
+
+  <!-- Fragment boxes -->
+  <rect x="32" y="118" width="136" height="32" rx="5" fill="#14532d" stroke="#10b981" stroke-width="1"/>
+  <text x="100" y="135" text-anchor="middle" font-size="8.5" fill="#a7f3d0">Block: DECL d:1/b:0 ← 0</text>
+  <text x="100" y="147" text-anchor="middle" font-size="8" fill="#6ee7b7">type: BlockFragment</text>
+
+  <rect x="32" y="158" width="136" height="32" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+  <text x="100" y="174" text-anchor="middle" font-size="8.5" fill="#93c5fd">CFG Edge: b:1 →[T]→ b:2</text>
+  <text x="100" y="186" text-anchor="middle" font-size="8" fill="#60a5fa">type: CFGEdgeFragment</text>
+
+  <rect x="32" y="198" width="136" height="32" rx="5" fill="#7c2d12" stroke="#f59e0b" stroke-width="1"/>
+  <text x="100" y="214" text-anchor="middle" font-size="8.5" fill="#fde68a">DFG Edge: b:0 → b:1</text>
+  <text x="100" y="226" text-anchor="middle" font-size="8" fill="#fcd34d">binding: d:1/b:0</text>
+
+  <rect x="32" y="238" width="136" height="32" rx="5" fill="#14532d" stroke="#10b981" stroke-width="1"/>
+  <text x="100" y="253" text-anchor="middle" font-size="8.5" fill="#a7f3d0">Block: BRANCH &gt; 0</text>
+  <text x="100" y="265" text-anchor="middle" font-size="8" fill="#6ee7b7">type: BlockFragment</text>
+
+  <rect x="32" y="278" width="136" height="32" rx="5" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+  <text x="100" y="293" text-anchor="middle" font-size="8.5" fill="#93c5fd">CFG Edge: b:3 →[F]→ return</text>
+  <text x="100" y="305" text-anchor="middle" font-size="8" fill="#60a5fa">type: CFGEdgeFragment</text>
+
+  <text x="100" y="340" text-anchor="middle" font-size="10" fill="#374151">… N fragments total …</text>
+
+  <!-- Step 2: SHA-256 per fragment -->
+  <line x1="180" y1="220" x2="220" y2="220" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="200" y="213" text-anchor="middle" font-size="8" fill="#64748b">hash</text>
+  <text x="200" y="230" text-anchor="middle" font-size="8" fill="#64748b">each</text>
+
+  <rect x="225" y="100" width="180" height="240" rx="10" fill="#1c1917" stroke="#57534e" stroke-width="1.5"/>
+  <text x="315" y="122" text-anchor="middle" font-size="11" font-weight="bold" fill="#d6d3d1">SHA-256 per Fragment</text>
+  <text x="315" y="138" text-anchor="middle" font-size="9" fill="#78716c">H_i = SHA-256(deterministicStringify(f_i))</text>
+
+  <rect x="238" y="150" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="315" y="166" text-anchor="middle" font-size="8" fill="#a8a29e" font-family="monospace">a3f8d1… (64 hex chars)</text>
+
+  <rect x="238" y="182" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="315" y="198" text-anchor="middle" font-size="8" fill="#a8a29e" font-family="monospace">b92cc4… (64 hex chars)</text>
+
+  <rect x="238" y="214" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="315" y="230" text-anchor="middle" font-size="8" fill="#a8a29e" font-family="monospace">e71fa9… (64 hex chars)</text>
+
+  <rect x="238" y="246" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="315" y="262" text-anchor="middle" font-size="8" fill="#a8a29e" font-family="monospace">4d0b3e… (64 hex chars)</text>
+
+  <rect x="238" y="278" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="315" y="294" text-anchor="middle" font-size="8" fill="#a8a29e" font-family="monospace">cf22a1… (64 hex chars)</text>
+
+  <text x="315" y="320" text-anchor="middle" font-size="10" fill="#374151">… Hₙ hashes …</text>
+
+  <!-- Step 3: Sort -->
+  <line x1="410" y1="220" x2="450" y2="220" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="430" y="213" text-anchor="middle" font-size="8" fill="#64748b">lex</text>
+  <text x="430" y="228" text-anchor="middle" font-size="8" fill="#64748b">sort</text>
+
+  <rect x="455" y="100" width="180" height="240" rx="10" fill="#1c1917" stroke="#57534e" stroke-width="1.5"/>
+  <text x="545" y="122" text-anchor="middle" font-size="11" font-weight="bold" fill="#d6d3d1">Sorted Hash Array</text>
+  <text x="545" y="138" text-anchor="middle" font-size="9" fill="#78716c">rawHashes.sort()  [lexicographic]</text>
+
+  <rect x="468" y="150" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="545" y="166" text-anchor="middle" font-size="8" fill="#fde68a" font-family="monospace">4d0b3e…  [rank 1]</text>
+
+  <rect x="468" y="182" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="545" y="198" text-anchor="middle" font-size="8" fill="#fde68a" font-family="monospace">a3f8d1…  [rank 2]</text>
+
+  <rect x="468" y="214" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="545" y="230" text-anchor="middle" font-size="8" fill="#fde68a" font-family="monospace">b92cc4…  [rank 3]</text>
+
+  <rect x="468" y="246" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="545" y="262" text-anchor="middle" font-size="8" fill="#fde68a" font-family="monospace">cf22a1…  [rank 4]</text>
+
+  <rect x="468" y="278" width="154" height="24" rx="4" fill="#0c0a09" stroke="#44403c"/>
+  <text x="545" y="294" text-anchor="middle" font-size="8" fill="#fde68a" font-family="monospace">e71fa9…  [rank 5]</text>
+
+  <!-- Step 4: Concat + hash -->
+  <line x1="640" y1="220" x2="675" y2="220" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrGold)"/>
+  <text x="657" y="213" text-anchor="middle" font-size="8" fill="#f59e0b">concat</text>
+  <text x="657" y="228" text-anchor="middle" font-size="8" fill="#f59e0b">+ SHA-256</text>
+
+  <!-- Final fingerprint box -->
+  <rect x="680" y="140" width="195" height="160" rx="10" fill="#b45309" stroke="#f59e0b" stroke-width="2"/>
+  <text x="777" y="163" text-anchor="middle" font-size="12" font-weight="bold" fill="white">Global Fingerprint</text>
+  <text x="777" y="180" text-anchor="middle" font-size="9" fill="#fde68a">F = SHA-256(H₁ || H₂ || … || Hₙ)</text>
+  <text x="777" y="195" text-anchor="middle" font-size="8" fill="#fcd34d">(sorted, concatenated hashes)</text>
+
+  <rect x="695" y="208" width="165" height="30" rx="5" fill="#0c0a09" stroke="#78350f"/>
+  <text x="777" y="228" text-anchor="middle" font-size="9" fill="#fbbf24" font-family="monospace">7e4a91f3c8d2b056…</text>
+
+  <text x="777" y="265" text-anchor="middle" font-size="9" fill="#fde68a">Order-independent</text>
+  <text x="777" y="281" text-anchor="middle" font-size="9" fill="#fde68a">Collision-resistant</text>
+  <text x="777" y="297" text-anchor="middle" font-size="9" fill="#fde68a">Stable across renames</text>
+
+  <!-- Formula box at bottom -->
+  <rect x="20" y="395" width="860" height="70" rx="8" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="450" y="415" text-anchor="middle" font-size="11" font-weight="bold" fill="#94a3b8">Provenance Confidence Formula</text>
+  <text x="450" y="435" text-anchor="middle" font-size="12" fill="#c4b5fd">confidence = |FragmentSet_A  ∩  FragmentSet_B| / min(|FragmentSet_A|, |FragmentSet_B|)</text>
+  <text x="450" y="455" text-anchor="middle" font-size="10" fill="#64748b">EXACT_MATCH: all fragments match both ways  |  PARTIAL_MATCH: confidence &gt; 0.10  |  NO_MATCH: confidence ≤ 0.10</text>
+</svg>

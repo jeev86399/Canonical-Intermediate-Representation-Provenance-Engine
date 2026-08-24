@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 200" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1117"/>
+      <stop offset="100%" style="stop-color:#1a1d2e"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4b5563"/>
+    </marker>
+  </defs>
+  <rect width="900" height="200" fill="url(#bg)"/>
+  <text x="450" y="22" text-anchor="middle" font-size="14" font-weight="bold" fill="#f1f5f9">CIPE Processing Pipeline</text>
+
+  <!-- Boxes -->
+  <!-- Source Code -->
+  <rect x="10" y="50" width="90" height="80" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="55" y="80" text-anchor="middle" font-size="9" font-weight="bold" fill="#94a3b8">Source</text>
+  <text x="55" y="95" text-anchor="middle" font-size="9" fill="#64748b">Code</text>
+  <text x="55" y="115" text-anchor="middle" font-size="8" fill="#334155">JavaScript</text>
+
+  <line x1="100" y1="90" x2="120" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Parser -->
+  <rect x="120" y="50" width="90" height="80" rx="8" fill="#1d4ed8" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="165" y="78" text-anchor="middle" font-size="9" font-weight="bold" fill="white">Parser</text>
+  <text x="165" y="93" text-anchor="middle" font-size="8" fill="#bfdbfe">Babel AST</text>
+  <text x="165" y="108" text-anchor="middle" font-size="8" fill="#93c5fd">+ Reject</text>
+  <text x="165" y="120" text-anchor="middle" font-size="8" fill="#93c5fd">Unsupported</text>
+
+  <line x1="210" y1="90" x2="230" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Scope -->
+  <rect x="230" y="50" width="90" height="80" rx="8" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1"/>
+  <text x="275" y="78" text-anchor="middle" font-size="9" font-weight="bold" fill="#93c5fd">Scope</text>
+  <text x="275" y="93" text-anchor="middle" font-size="8" fill="#bfdbfe">Lexical ID</text>
+  <text x="275" y="108" text-anchor="middle" font-size="8" fill="#60a5fa">d:N/b:M</text>
+  <text x="275" y="120" text-anchor="middle" font-size="8" fill="#60a5fa">normalization</text>
+
+  <line x1="320" y1="90" x2="340" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Canonical IR -->
+  <rect x="340" y="50" width="90" height="80" rx="8" fill="#6d28d9" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="385" y="76" text-anchor="middle" font-size="9" font-weight="bold" fill="white">Canonical</text>
+  <text x="385" y="90" text-anchor="middle" font-size="9" font-weight="bold" fill="white">IR</text>
+  <text x="385" y="106" text-anchor="middle" font-size="8" fill="#e9d5ff">Commutative</text>
+  <text x="385" y="118" text-anchor="middle" font-size="8" fill="#e9d5ff">Sort + Norm</text>
+
+  <line x1="430" y1="90" x2="450" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- CFG -->
+  <rect x="450" y="50" width="90" height="80" rx="8" fill="#14532d" stroke="#10b981" stroke-width="1"/>
+  <text x="495" y="78" text-anchor="middle" font-size="9" font-weight="bold" fill="#a7f3d0">CFG +</text>
+  <text x="495" y="92" text-anchor="middle" font-size="9" font-weight="bold" fill="#a7f3d0">Dataflow</text>
+  <text x="495" y="108" text-anchor="middle" font-size="8" fill="#6ee7b7">Basic blocks</text>
+  <text x="495" y="120" text-anchor="middle" font-size="8" fill="#6ee7b7">Use-def chains</text>
+
+  <line x1="540" y1="90" x2="560" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Fragment -->
+  <rect x="560" y="50" width="90" height="80" rx="8" fill="#7c2d12" stroke="#f59e0b" stroke-width="1"/>
+  <text x="605" y="78" text-anchor="middle" font-size="9" font-weight="bold" fill="#fde68a">Fragment</text>
+  <text x="605" y="92" text-anchor="middle" font-size="9" font-weight="bold" fill="#fde68a">Engine</text>
+  <text x="605" y="108" text-anchor="middle" font-size="8" fill="#fcd34d">Block / CFG</text>
+  <text x="605" y="120" text-anchor="middle" font-size="8" fill="#fcd34d">/ DFG edges</text>
+
+  <line x1="650" y1="90" x2="670" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Fingerprint -->
+  <rect x="670" y="50" width="90" height="80" rx="8" fill="#b45309" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="715" y="76" text-anchor="middle" font-size="9" font-weight="bold" fill="white">LSCH</text>
+  <text x="715" y="90" text-anchor="middle" font-size="9" font-weight="bold" fill="white">Fingerprint</text>
+  <text x="715" y="106" text-anchor="middle" font-size="8" fill="#fde68a">SHA-256</text>
+  <text x="715" y="118" text-anchor="middle" font-size="8" fill="#fde68a">per fragment</text>
+
+  <line x1="760" y1="90" x2="780" y2="90" stroke="#4b5563" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Provenance -->
+  <rect x="780" y="50" width="110" height="80" rx="8" fill="#7c3aed" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="835" y="76" text-anchor="middle" font-size="9" font-weight="bold" fill="white">Provenance</text>
+  <text x="835" y="90" text-anchor="middle" font-size="9" font-weight="bold" fill="white">Engine</text>
+  <text x="835" y="106" text-anchor="middle" font-size="8" fill="#e9d5ff">Set ∩ on hashes</text>
+  <text x="835" y="118" text-anchor="middle" font-size="8" fill="#e9d5ff">Report + Conf.</text>
+
+  <!-- Sub-labels -->
+  <text x="55" y="175" text-anchor="middle" font-size="8" fill="#334155">Input</text>
+  <text x="165" y="175" text-anchor="middle" font-size="8" fill="#3b82f6">babel/parser</text>
+  <text x="275" y="175" text-anchor="middle" font-size="8" fill="#3b82f6">scope-engine</text>
+  <text x="385" y="175" text-anchor="middle" font-size="8" fill="#8b5cf6">canonical-ir</text>
+  <text x="495" y="175" text-anchor="middle" font-size="8" fill="#10b981">cfg + dataflow</text>
+  <text x="605" y="175" text-anchor="middle" font-size="8" fill="#f59e0b">fragment-engine</text>
+  <text x="715" y="175" text-anchor="middle" font-size="8" fill="#f59e0b">fingerprint-engine</text>
+  <text x="835" y="175" text-anchor="middle" font-size="8" fill="#8b5cf6">provenance-engine</text>
+</svg>

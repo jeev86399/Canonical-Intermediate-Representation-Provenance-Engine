@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f1117"/>
+      <stop offset="100%" style="stop-color:#1a1d2e"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#6b7280"/>
+    </marker>
+    <marker id="arrTrue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <marker id="arrFalse" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arrBack" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f59e0b"/>
+    </marker>
+  </defs>
+
+  <rect width="820" height="500" fill="url(#bg)"/>
+  <text x="410" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#f1f5f9">CFG Example: calculateTotal(items, discount)</text>
+  <text x="410" y="48" text-anchor="middle" font-size="10" fill="#6b7280">Source: function calculateTotal(items, discount) { let total=0; for(…){ total+=price; } if(discount>0){ total-=discount; } return total; }</text>
+
+  <!-- ENTRY -->
+  <ellipse cx="410" cy="90" rx="55" ry="22" fill="#1e3a5f" stroke="#3b82f6" stroke-width="2"/>
+  <text x="410" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#93c5fd">ENTRY</text>
+
+  <line x1="410" y1="112" x2="410" y2="145" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Block b:0 — Init -->
+  <rect x="310" y="145" width="200" height="70" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="410" y="165" text-anchor="middle" font-size="10" font-weight="bold" fill="#94a3b8">Block b:0 (Entry)</text>
+  <text x="410" y="182" text-anchor="middle" font-size="9" fill="#64748b">DECL d:1/b:0 ← Literal(0)</text>
+  <text x="410" y="197" text-anchor="middle" font-size="9" fill="#64748b">[params: d:0/b:0, d:0/b:1 bound]</text>
+
+  <line x1="410" y1="215" x2="410" y2="248" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Block b:1 — Loop header -->
+  <rect x="295" y="248" width="230" height="70" rx="8" fill="#14532d" stroke="#10b981" stroke-width="1.5"/>
+  <text x="410" y="268" text-anchor="middle" font-size="10" font-weight="bold" fill="#a7f3d0">Block b:1 (Loop Header)</text>
+  <text x="410" y="285" text-anchor="middle" font-size="9" fill="#6ee7b7">DECL d:2/b:0 ← Literal(0)  [i]</text>
+  <text x="410" y="300" text-anchor="middle" font-size="9" fill="#6ee7b7">BRANCH: d:2/b:0 &lt; d:0/b:0.length</text>
+
+  <!-- Loop back edge label -->
+  <text x="250" y="295" text-anchor="middle" font-size="9" fill="#f59e0b">loop back</text>
+
+  <!-- True branch — loop body -->
+  <line x1="330" y1="318" x2="200" y2="355" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrTrue)"/>
+  <text x="250" y="342" text-anchor="middle" font-size="9" fill="#10b981">true</text>
+
+  <!-- False branch — post-loop -->
+  <line x1="490" y1="318" x2="560" y2="355" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrFalse)"/>
+  <text x="540" y="342" text-anchor="middle" font-size="9" fill="#ef4444">false</text>
+
+  <!-- Block b:2 — Loop body -->
+  <rect x="80" y="355" width="230" height="80" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="195" y="375" text-anchor="middle" font-size="10" font-weight="bold" fill="#94a3b8">Block b:2 (Loop Body)</text>
+  <text x="195" y="392" text-anchor="middle" font-size="9" fill="#64748b">DECL d:3/b:0 ← d:0/b:0[d:2/b:0].price</text>
+  <text x="195" y="407" text-anchor="middle" font-size="9" fill="#64748b">ASSIGN d:1/b:0 ← d:1/b:0 + d:3/b:0</text>
+  <text x="195" y="422" text-anchor="middle" font-size="9" fill="#64748b">UPDATE d:2/b:0++</text>
+
+  <!-- Loop back arrow -->
+  <path d="M 80 395 Q 40 320 295 283" stroke="#f59e0b" stroke-width="1.5" fill="none" marker-end="url(#arrBack)" stroke-dasharray="4,3"/>
+
+  <!-- Block b:3 — If check -->
+  <rect x="455" y="355" width="210" height="70" rx="8" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+  <text x="560" y="375" text-anchor="middle" font-size="10" font-weight="bold" fill="#94a3b8">Block b:3 (If Condition)</text>
+  <text x="560" y="392" text-anchor="middle" font-size="9" fill="#64748b">BRANCH: d:0/b:1 &gt; Literal(0)</text>
+  <text x="560" y="407" text-anchor="middle" font-size="9" fill="#64748b">[discount param]</text>
+
+  <!-- True branch — if body -->
+  <line x1="500" y1="425" x2="430" y2="460" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrTrue)"/>
+  <text x="455" y="450" text-anchor="middle" font-size="9" fill="#10b981">true</text>
+  <!-- False branch — return -->
+  <line x1="620" y1="425" x2="680" y2="460" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrFalse)"/>
+  <text x="660" y="450" text-anchor="middle" font-size="9" fill="#ef4444">false</text>
+
+  <!-- Block b:4 — If body -->
+  <rect x="330" y="460" width="200" height="30" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+  <text x="430" y="480" text-anchor="middle" font-size="9" fill="#94a3b8">ASSIGN d:1/b:0 ← d:1/b:0 - d:0/b:1</text>
+
+  <!-- Return block -->
+  <rect x="590" y="460" width="140" height="30" rx="6" fill="#7c3aed" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="660" y="480" text-anchor="middle" font-size="9" fill="#e9d5ff">RETURN d:1/b:0</text>
+
+  <!-- Merge to return -->
+  <line x1="530" y1="490" x2="590" y2="490" stroke="#6b7280" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Legend -->
+  <rect x="10" y="355" width="65" height="110" rx="6" fill="#0f172a" stroke="#1e293b"/>
+  <text x="42" y="372" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748b">LEGEND</text>
+  <rect x="15" y="380" width="10" height="8" rx="1" fill="#14532d" stroke="#10b981"/>
+  <text x="29" y="388" font-size="7" fill="#94a3b8">Loop</text>
+  <rect x="15" y="398" width="10" height="8" rx="1" fill="#7c3aed" stroke="#8b5cf6"/>
+  <text x="29" y="406" font-size="7" fill="#94a3b8">Return</text>
+  <line x1="15" y1="418" x2="25" y2="418" stroke="#10b981" stroke-width="1.5"/>
+  <text x="29" y="422" font-size="7" fill="#94a3b8">True edge</text>
+  <line x1="15" y1="432" x2="25" y2="432" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="29" y="436" font-size="7" fill="#94a3b8">False edge</text>
+  <line x1="15" y1="446" x2="25" y2="446" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="29" y="450" font-size="7" fill="#94a3b8">Back edge</text>
+
+  <text x="410" y="492" text-anchor="middle" font-size="8" fill="#374151">All identifiers normalized to canonical bindings (d:scope/b:block format)</text>
+</svg>

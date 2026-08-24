@@ -1,0 +1,8 @@
+Scenario,Lines,Parse_ms,Scope_ms,IR_ms,CFG_ms,Dataflow_ms,Fragment_ms,Fingerprint_ms,Total_ms,Memory_MB,Fragments
+10 lines,9,,,,,,,, 44.47,1.22,7
+100 lines,101,,,,,,,, 57.95,1.38,76
+500 lines,501,,,,,,,,175.04,4.38,376
+1000 lines,1001,79.23,23.00,1.97,,17.80,40.09,31.28,213.96,6.92,751
+5000 lines sequential,5001,159.21,64.18,8.51,,386.26,144.32,157.00,937.95,90.85,3751
+Deeply nested 10 depth,45,5.83,1.04,0.62,,2.20,1.56,4.41,16.34,2.80,133
+Deeply nested 100 depth,405,31.12,4.20,1.50,,373.91,9.55,21.39,444.22,21.66,1303

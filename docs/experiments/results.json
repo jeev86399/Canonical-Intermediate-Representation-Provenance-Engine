@@ -1,0 +1,342 @@
+[
+  {
+    "id": 1,
+    "category": "variable renaming",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 12.417504999999949,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 2,
+    "category": "function renaming",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 6.028367000000003,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 3,
+    "category": "whitespace/comments",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 2.1383900000000153,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": true
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 4,
+    "category": "independent function reordering",
+    "expected": "PARTIAL_MATCH",
+    "cipe": {
+      "status": "PARTIAL_MATCH",
+      "timeMs": 24.93474599999996,
+      "confidence": 0.6666666666666666
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 5,
+    "category": "equivalent supported syntax transformations",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 14.386307000000045,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 6,
+    "category": "commutative expressions",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 6.105967000000021,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 7,
+    "category": "partial function copying",
+    "expected": "PARTIAL_MATCH",
+    "cipe": {
+      "status": "PARTIAL_MATCH",
+      "timeMs": 10.980063000000087,
+      "confidence": 0.5
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 8,
+    "category": "multiple fragment copying",
+    "expected": "PARTIAL_MATCH",
+    "cipe": {
+      "status": "PARTIAL_MATCH",
+      "timeMs": 6.874086000000034,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 9,
+    "category": "unrelated code insertion",
+    "expected": "PARTIAL_MATCH",
+    "cipe": {
+      "status": "PARTIAL_MATCH",
+      "timeMs": 4.01400000000001,
+      "confidence": 0.5
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 10,
+    "category": "dependency modification",
+    "expected": "NO_MATCH",
+    "cipe": {
+      "status": "NO_MATCH",
+      "timeMs": 13.276344999999992,
+      "confidence": 0
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 11,
+    "category": "meaningful algorithm modification",
+    "expected": "NO_MATCH",
+    "cipe": {
+      "status": "NO_MATCH",
+      "timeMs": 2.943986999999993,
+      "confidence": 0
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 12,
+    "category": "unsupported constructs",
+    "expected": "ERROR_UNSUPPORTED",
+    "cipe": {
+      "status": "ERROR_UNSUPPORTED",
+      "timeMs": 0.5548749999999245
+    },
+    "baselineHash": {
+      "match": true
+    },
+    "baselineToken": {
+      "match": true
+    },
+    "baselineAST": {
+      "match": true
+    }
+  },
+  {
+    "id": 13,
+    "category": "nested control flow",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 25.41240300000004,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 14,
+    "category": "loops",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 35.813117000000034,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 15,
+    "category": "shadowed variables",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 6.105067000000076,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 16,
+    "category": "closures",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 3.183832999999936,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 17,
+    "category": "recursive functions",
+    "expected": "EXACT_MATCH",
+    "cipe": {
+      "status": "EXACT_MATCH",
+      "timeMs": 2.722206999999912,
+      "confidence": 1
+    },
+    "baselineHash": {
+      "match": false
+    },
+    "baselineToken": {
+      "match": false
+    },
+    "baselineAST": {
+      "match": false
+    }
+  },
+  {
+    "id": 18,
+    "category": "cyclic dependency graphs",
+    "expected": "ERROR_UNSUPPORTED",
+    "cipe": {
+      "status": "ERROR_UNSUPPORTED",
+      "timeMs": 8.63417400000003
+    },
+    "baselineHash": {
+      "match": true
+    },
+    "baselineToken": {
+      "match": true
+    },
+    "baselineAST": {
+      "match": true
+    }
+  }
+]
