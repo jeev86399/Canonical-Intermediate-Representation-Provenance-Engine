@@ -1,0 +1,22 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "timestamp": "2026-08-25T16:55:51.602Z",
+    "generator": "CIPE Git Provenance Pipeline",
+    "algorithm": "WLCDH-SHA256"
+  },
+  "canonicalVersion": "CIPE-9-WLCDH",
+  "oldFingerprint": "8548774ebcdacbb1d13000b22775856d5cdc6e7350ba65ac1ab9ce2e22c2f329",
+  "newFingerprint": "8548774ebcdacbb1d13000b22775856d5cdc6e7350ba65ac1ab9ce2e22c2f329",
+  "fragmentCount": 2,
+  "matchedFragments": [
+    "43e9da9d953b59654c90bf1c7693a1331fb863eaff40443c4d87526139c413f8",
+    "77dd68108b01af8b6aa8797300c7d4ee7df2b9c990673e3693d07928bde125dc"
+  ],
+  "addedFragments": [],
+  "removedFragments": [],
+  "dependencyChanges": 0,
+  "controlFlowChanges": 0,
+  "verificationResult": "PARTIAL_MATCH",
+  "digitalSignature": "MOCK_SIGNATURE_998877665544332211"
+}

@@ -5,7 +5,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 12.417504999999949,
+      "timeMs": 22.609047999999916,
       "confidence": 1
     },
     "baselineHash": {
@@ -24,7 +24,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 6.028367000000003,
+      "timeMs": 8.21445899999992,
       "confidence": 1
     },
     "baselineHash": {
@@ -43,7 +43,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 2.1383900000000153,
+      "timeMs": 6.355849000000035,
       "confidence": 1
     },
     "baselineHash": {
@@ -62,7 +62,7 @@
     "expected": "PARTIAL_MATCH",
     "cipe": {
       "status": "PARTIAL_MATCH",
-      "timeMs": 24.93474599999996,
+      "timeMs": 8.051579999999944,
       "confidence": 0.6666666666666666
     },
     "baselineHash": {
@@ -81,7 +81,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 14.386307000000045,
+      "timeMs": 6.443001999999979,
       "confidence": 1
     },
     "baselineHash": {
@@ -100,7 +100,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 6.105967000000021,
+      "timeMs": 10.051533999999947,
       "confidence": 1
     },
     "baselineHash": {
@@ -119,7 +119,7 @@
     "expected": "PARTIAL_MATCH",
     "cipe": {
       "status": "PARTIAL_MATCH",
-      "timeMs": 10.980063000000087,
+      "timeMs": 7.648140000000012,
       "confidence": 0.5
     },
     "baselineHash": {
@@ -138,7 +138,7 @@
     "expected": "PARTIAL_MATCH",
     "cipe": {
       "status": "PARTIAL_MATCH",
-      "timeMs": 6.874086000000034,
+      "timeMs": 9.257319999999936,
       "confidence": 1
     },
     "baselineHash": {
@@ -157,7 +157,7 @@
     "expected": "PARTIAL_MATCH",
     "cipe": {
       "status": "PARTIAL_MATCH",
-      "timeMs": 4.01400000000001,
+      "timeMs": 12.46241699999996,
       "confidence": 0.5
     },
     "baselineHash": {
@@ -176,7 +176,7 @@
     "expected": "NO_MATCH",
     "cipe": {
       "status": "NO_MATCH",
-      "timeMs": 13.276344999999992,
+      "timeMs": 6.5813810000000785,
       "confidence": 0
     },
     "baselineHash": {
@@ -195,7 +195,7 @@
     "expected": "NO_MATCH",
     "cipe": {
       "status": "NO_MATCH",
-      "timeMs": 2.943986999999993,
+      "timeMs": 6.780366999999956,
       "confidence": 0
     },
     "baselineHash": {
@@ -214,7 +214,7 @@
     "expected": "ERROR_UNSUPPORTED",
     "cipe": {
       "status": "ERROR_UNSUPPORTED",
-      "timeMs": 0.5548749999999245
+      "timeMs": 1.5905500000000075
     },
     "baselineHash": {
       "match": true
@@ -232,7 +232,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 25.41240300000004,
+      "timeMs": 24.881494999999973,
       "confidence": 1
     },
     "baselineHash": {
@@ -251,7 +251,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 35.813117000000034,
+      "timeMs": 19.434597000000053,
       "confidence": 1
     },
     "baselineHash": {
@@ -270,7 +270,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 6.105067000000076,
+      "timeMs": 9.24318500000004,
       "confidence": 1
     },
     "baselineHash": {
@@ -289,7 +289,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 3.183832999999936,
+      "timeMs": 5.324685000000045,
       "confidence": 1
     },
     "baselineHash": {
@@ -308,7 +308,7 @@
     "expected": "EXACT_MATCH",
     "cipe": {
       "status": "EXACT_MATCH",
-      "timeMs": 2.722206999999912,
+      "timeMs": 9.461626999999908,
       "confidence": 1
     },
     "baselineHash": {
@@ -327,7 +327,7 @@
     "expected": "ERROR_UNSUPPORTED",
     "cipe": {
       "status": "ERROR_UNSUPPORTED",
-      "timeMs": 8.63417400000003
+      "timeMs": 2.7385020000000395
     },
     "baselineHash": {
       "match": true
