@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 const { generateCorpus } = require('../generator');
 const { parseSource } = require('../../../packages/parser');
-const { generateFingerprints } = require('../../../packages/provenance-pipeline');
+const { analyzeSource } = require('../../../packages/provenance-pipeline');
 const { verifyProvenance } = require('../../../packages/provenance-engine');
 
 // Baselines
@@ -77,8 +77,8 @@ async function runExperiments(fastMode = false) {
 
     // 2. CIPE Pipeline
     try {
-      const sourceData = generateFingerprints(pair.sourceVariant, 'source.js');
-      const targetData = generateFingerprints(pair.targetVariant, 'target.js');
+      const sourceData = analyzeSource(pair.sourceVariant, 'source.js');
+      const targetData = analyzeSource(pair.targetVariant, 'target.js');
 
       const targetMeta = { repositoryId: 'R1', commitHash: 'C1', filePath: 'source.js', fragments: sourceData.fragments };
       const suspectMeta = { repositoryId: 'R2', commitHash: 'C2', filePath: 'target.js', fragments: targetData.fragments };

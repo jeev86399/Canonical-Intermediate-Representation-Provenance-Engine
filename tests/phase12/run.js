@@ -1,17 +1,17 @@
 const { runExperiments } = require('./experiments');
 const { profilePipeline } = require('../../scripts/profile-pipeline');
-const { generateFingerprints } = require('../../packages/provenance-pipeline');
+const { analyzeSource } = require('../../packages/provenance-pipeline');
 const os = require('os');
 const fs = require('fs');
 
 async function testDeterminism() {
   console.log('\n--- Phase 12: Determinism Verification ---');
   const code = `function a(b) { return b + 1; }`;
-  const firstRun = generateFingerprints(code, 'test.js');
+  const firstRun = analyzeSource(code, 'test.js');
   
   for (let i = 0; i < 100; i++) {
-    const nthRun = generateFingerprints(code, 'test.js');
-    if (nthRun.globalFingerprint !== firstRun.globalFingerprint) {
+    const nthRun = analyzeSource(code, 'test.js');
+    if (nthRun.fingerprint !== firstRun.fingerprint) {
       throw new Error(`Determinism failure on iteration ${i}!`);
     }
   }
