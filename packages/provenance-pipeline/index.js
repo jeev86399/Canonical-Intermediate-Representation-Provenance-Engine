@@ -60,6 +60,30 @@ function compareFragments(oldFragments, newFragments) {
 }
 
 /**
+ * Determines the verification result classification.
+ * EXACT_MATCH: All fragments match, none added/removed
+ * STRUCTURAL_MATCH: Global fingerprints match
+ * PARTIAL_MATCH: Some fragments match (>0)
+ * NO_MATCH: No fragments match
+ * INVALID_SOURCE: Source could not be parsed
+ */
+function determineVerificationResult(oldAnalysis, newAnalysis, comparison) {
+  if (!oldAnalysis.fingerprint || !newAnalysis.fingerprint) {
+    return "INVALID_SOURCE";
+  }
+  if (oldAnalysis.fingerprint === newAnalysis.fingerprint) {
+    return "EXACT_MATCH";
+  }
+  if (comparison.matched.length > 0 && comparison.added.length === 0 && comparison.removed.length === 0) {
+    return "STRUCTURAL_MATCH";
+  }
+  if (comparison.matched.length > 0) {
+    return "PARTIAL_MATCH";
+  }
+  return "NO_MATCH";
+}
+
+/**
  * Perform a full provenance analysis between a before and after state of a file.
  * @param {string} oldSource 
  * @param {string} newSource 
@@ -83,7 +107,7 @@ function compareSources(oldSource, newSource) {
     // Using simple metrics for dependency/control flow changes based on fragment sets
     dependencyChanges: comparison.added.length + comparison.removed.length,
     controlFlowChanges: comparison.added.length + comparison.removed.length,
-    verificationResult: comparison.matched.length > 0 ? "PARTIAL_MATCH" : (newAnalysis.fingerprint ? "NO_MATCH" : "INVALID_SOURCE")
+    verificationResult: determineVerificationResult(oldAnalysis, newAnalysis, comparison)
   };
 }
 

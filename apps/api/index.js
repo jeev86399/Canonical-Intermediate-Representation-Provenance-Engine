@@ -181,6 +181,127 @@ app.post('/api/compare', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
+
+// ============================================================
+// Phase 11: Provenance Index API Endpoints
+// ============================================================
+const { createIndex } = require('../../packages/provenance-index');
+const provenancePipeline = require('../../packages/provenance-pipeline');
+
+// In-memory provenance index (persists for the lifetime of the server)
+const provenanceIndex = createIndex();
+
+/**
+ * POST /api/provenance/index
+ * Index source code fragments into the provenance store.
+ */
+app.post('/api/provenance/index', (req, res) => {
+  try {
+    const { code, repositoryId, commitHash, filePath } = req.body;
+    if (!code) return res.status(400).json({ error: 'Source code is required.' });
+    if (!repositoryId) return res.status(400).json({ error: 'repositoryId is required.' });
+
+    const analysis = provenancePipeline.analyzeSource(code);
+    if (!analysis.fingerprint) {
+      return res.status(422).json({ error: 'Failed to analyze source code.', details: analysis.error });
+    }
+
+    let indexed = 0;
+    for (let i = 0; i < analysis.fragments.length; i++) {
+      const fp = analysis.fragments[i];
+      if (fp && typeof fp === 'string' && fp.length === 64) {
+        provenanceIndex.addFragment(fp, {
+          fragmentType: 'BasicBlock',
+          canonicalVersion: 'CIPE-9-WLCDH',
+          algorithmVersion: '1.0',
+          repositoryId,
+          commitHash: commitHash || '',
+          filePath: filePath || '',
+          blockIndex: i,
+          dependencyContext: [],
+          controlFlowContext: []
+        });
+        indexed++;
+      }
+    }
+
+    res.json({
+      globalFingerprint: analysis.fingerprint,
+      fragmentCount: analysis.fragments.length,
+      indexedCount: indexed,
+      stats: provenanceIndex.getStats()
+    });
+  } catch (error) {
+    res.status(422).json({ error: error.message, type: error.name });
+  }
+});
+
+/**
+ * POST /api/provenance/query
+ * Query fragments against the index, return candidates.
+ */
+app.post('/api/provenance/query', (req, res) => {
+  try {
+    const { code, fingerprints } = req.body;
+
+    let queryFingerprints = fingerprints;
+    if (code && !fingerprints) {
+      const analysis = provenancePipeline.analyzeSource(code);
+      if (!analysis.fingerprint) {
+        return res.status(422).json({ error: 'Failed to analyze source code.' });
+      }
+      queryFingerprints = analysis.fragments;
+    }
+
+    if (!queryFingerprints || !Array.isArray(queryFingerprints)) {
+      return res.status(400).json({ error: 'Either code or fingerprints array required.' });
+    }
+
+    const batchResults = provenanceIndex.queryBatch(queryFingerprints);
+    const candidates = [];
+    for (const [fp, records] of batchResults) {
+      candidates.push({ fingerprint: fp, matches: records });
+    }
+
+    res.json({
+      queryCount: queryFingerprints.length,
+      matchedCount: candidates.length,
+      candidates,
+      stats: provenanceIndex.getStats()
+    });
+  } catch (error) {
+    res.status(422).json({ error: error.message, type: error.name });
+  }
+});
+
+/**
+ * POST /api/provenance/verify
+ * Full cryptographic verification between two source code samples.
+ */
+app.post('/api/provenance/verify', (req, res) => {
+  try {
+    const { oldSource, newSource } = req.body;
+    if (!oldSource || !newSource) {
+      return res.status(400).json({ error: 'Both oldSource and newSource are required.' });
+    }
+
+    const evidence = provenancePipeline.compareSources(oldSource, newSource);
+    res.json(evidence);
+  } catch (error) {
+    res.status(422).json({ error: error.message, type: error.name });
+  }
+});
+
+/**
+ * GET /api/provenance/stats
+ * Get current provenance index statistics.
+ */
+app.get('/api/provenance/stats', (req, res) => {
+  const stats = provenanceIndex.getStats();
+  const commonFragments = provenanceIndex.identifyCommonFragments(0.3);
+  res.json({ ...stats, commonFragmentCount: commonFragments.length });
+});
+
 app.listen(PORT, () => {
   console.log(`CIPE API Server running on port ${PORT}`);
 });

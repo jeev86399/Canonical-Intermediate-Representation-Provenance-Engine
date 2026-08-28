@@ -1,0 +1,9 @@
+{
+  "name": "@cipe/provenance-index",
+  "version": "1.0.0",
+  "description": "Provenance Fragment Index for CIPE",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/phase11/baseline-vs-indexed.js"
+  }
+}
