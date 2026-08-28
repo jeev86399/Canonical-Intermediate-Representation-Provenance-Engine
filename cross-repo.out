@@ -1,0 +1,15 @@
+========================================
+   PHASE 10: CROSS-REPOSITORY PROVENANCE
+========================================
+
+CALL GRAPH: Map(1) { 'b:0' => Set(0) {} }
+CALL GRAPH: Map(2) { 'b:0' => Set(0) {}, 'b:1' => Set(0) {} }
+Repository A (Original) Fragments: 5
+Repository B (Suspect) Fragments:  6
+Matched Fragments:                 4
+Provenance Confidence:             80.00%
+Verdict: PARTIAL PROVENANCE LINK DETECTED (Snippet Copying)
+
+False Positives: 0
+False Negatives: 1
+CROSS-REPO PROVENANCE: FAIL

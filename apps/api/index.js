@@ -2,64 +2,64 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 
+// Phase 12 Rate Limiter (Memory-based token bucket)
+const rateLimits = new Map();
+function rateLimit(req, res, next) {
+  const ip = req.ip || 'unknown';
+  const now = Date.now();
+  const windowMs = 60000; // 1 minute
+  const maxReq = 100;
+  
+  if (!rateLimits.has(ip)) {
+    rateLimits.set(ip, { count: 1, resetAt: now + windowMs });
+    return next();
+  }
+  
+  const limit = rateLimits.get(ip);
+  if (now > limit.resetAt) {
+    limit.count = 1;
+    limit.resetAt = now + windowMs;
+    return next();
+  }
+  
+  limit.count++;
+  if (limit.count > maxReq) {
+    return res.status(429).json({ error: 'Too Many Requests', retryAfter: (limit.resetAt - now) / 1000 });
+  }
+  next();
+}
+
 // CIPE Engine Packages
-const { parseSource } = require('../../packages/parser/index.js');
-const { analyzeScope } = require('../../packages/scope-engine/index.js');
-const { generateCanonicalIR } = require('../../packages/canonical-ir/index.js');
-const { generateCFG } = require('../../packages/cfg-engine/index.js');
-const { analyzeDataflow } = require('../../packages/dataflow-engine/index.js');
-const { extractFragments } = require('../../packages/fragment-engine/index.js');
-const { generateFingerprint } = require('../../packages/fingerprint-engine/index.js');
-const { verifyProvenance } = require('../../packages/provenance-engine/index.js');
+const { parseSource } = require('../../packages/parser');
+const { analyzeScope } = require('../../packages/scope-engine');
+const { generateCanonicalIR } = require('../../packages/canonical-ir');
+const { generateCFG } = require('../../packages/cfg-engine');
+const { analyzeDataflow } = require('../../packages/dataflow-engine');
+const { extractFragments } = require('../../packages/fragment-engine');
+const { generateFingerprint } = require('../../packages/fingerprint-engine');
+
+// Phase 12 Provenance Engine
+const { verifyProvenance } = require('../../packages/provenance-engine');
 
 const app = express();
-// Phase 2D: Implement API size limits (50KB) to prevent AST-bombing
 app.use(express.json({ limit: '50kb' }));
 app.use(cors());
+app.use(rateLimit); // Apply globally for API hardening
 
-// Phase 2B: Database Schemas
-const sourceMetadataSchema = new mongoose.Schema({
-  timestamp: Date,
-  length: Number,
-  filename: String
-});
-
-const analysisRecordSchema = new mongoose.Schema({
-  sourceCode: String, // Kept purely for the prototype/demo
-  metadata: sourceMetadataSchema,
-  globalFingerprint: String,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const AnalysisRecord = mongoose.model('AnalysisRecord', analysisRecordSchema);
-
-const verificationReportSchema = new mongoose.Schema({
-  suspectId: { type: mongoose.Schema.Types.ObjectId, ref: 'AnalysisRecord' },
-  targetId: { type: mongoose.Schema.Types.ObjectId, ref: 'AnalysisRecord' },
-  status: String,
-  confidence: Number,
-  matchedFragments: Number,
-  totalFragments: Number,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const VerificationReport = mongoose.model('VerificationReport', verificationReportSchema);
-
-// MongoDB connection with resilient fallback
+// MongoDB setup...
 let dbConnected = false;
 mongoose.connect('mongodb://localhost:27017/cipe', {
-  serverSelectionTimeoutMS: 2000 // Short timeout to fallback quickly if Mongo is down
+  serverSelectionTimeoutMS: 2000
 }).then(() => {
   console.log('✅ Connected to MongoDB');
   dbConnected = true;
 }).catch(err => {
-  console.warn('⚠️ MongoDB connection failed. Running in memory-only mode for resiliency.', err.message);
+  console.warn('⚠️ MongoDB connection failed. Running in memory-only mode for resiliency.');
   dbConnected = false;
 });
 
-// Pipeline execution helper
-function runPipeline(code) {
-  const parsed = parseSource(code);
+function runPipeline(code, filePath = 'unknown.js') {
+  const parsed = parseSource(code, filePath);
   const scopedAst = analyzeScope(parsed.ast).ast;
   const ir = generateCanonicalIR(scopedAst);
   const cfg = generateCFG(ir);
@@ -70,238 +70,71 @@ function runPipeline(code) {
   return { parsed, ir, cfg, dataflow, fragments, fingerprintData };
 }
 
-// Phase 2A: End-to-End Integration
-app.post('/api/analyze', async (req, res) => {
+// Timeout wrapper
+const timeout = (ms) => new Promise((_, reject) => setTimeout(() => reject(new Error('Request Timeout')), ms));
+
+app.post('/api/provenance/verify', async (req, res) => {
   try {
-    const { code, filename = 'unknown.js' } = req.body;
-    if (!code) {
-      return res.status(400).json({ error: 'Source code is required.' });
+    const { targetSource, suspectSource, targetMeta, suspectMeta } = req.body;
+    if (!targetSource || !suspectSource) {
+      return res.status(400).json({ error: 'Both targetSource and suspectSource are required.' });
     }
 
-    const { parsed, ir, cfg, dataflow, fragments, fingerprintData } = runPipeline(code);
+    // Wrap in timeout (e.g., 5 seconds)
+    const verificationTask = async () => {
+      const targetPipeline = runPipeline(targetSource, targetMeta?.filePath || 'target.js');
+      const suspectPipeline = runPipeline(suspectSource, suspectMeta?.filePath || 'suspect.js');
 
-    let dbId = null;
-    let databaseWarning = !dbConnected;
+      const targetData = {
+        repositoryId: targetMeta?.repositoryId || 'R1',
+        commitHash: targetMeta?.commitHash || 'C1',
+        filePath: targetMeta?.filePath || 'target.js',
+        fragments: targetPipeline.fingerprintData.fragments.map(f => ({ hash: f.hash, content: f.content }))
+      };
 
-    // Phase 2B: Database persistence if available
-    if (dbConnected) {
-      try {
-        const record = new AnalysisRecord({
-          sourceCode: code,
-          metadata: {
-            timestamp: new Date(),
-            length: code.length,
-            filename
-          },
-          globalFingerprint: fingerprintData.globalFingerprint
-        });
-        await record.save();
-        dbId = record._id;
-      } catch (dbErr) {
-        console.error('DB Save Error (Analysis):', dbErr.message);
-        databaseWarning = true;
-      }
-    }
+      const suspectData = {
+        repositoryId: suspectMeta?.repositoryId || 'R2',
+        commitHash: suspectMeta?.commitHash || 'C2',
+        filePath: suspectMeta?.filePath || 'suspect.js',
+        fragments: suspectPipeline.fingerprintData.fragments.map(f => ({ hash: f.hash, content: f.content }))
+      };
 
-    // Clean cyclic references from graph structures for JSON serialization
-    // (Fragment engine already sanitizes content for hashing)
-    const safeDataflow = dataflow.blocks.map(b => ({
-      id: b.id,
-      canonicalId: b.canonicalId,
-      instructions: fragments.filter(f => f.type === 'BlockFragment' && f.blockId === b.canonicalId)[0]?.instructions || [],
-      successors: b.successors.map(s => s.id)
-    }));
+      return verifyProvenance(targetData, suspectData);
+    };
 
-    res.json({
-      dbId,
-      databaseWarning,
-      parserStatus: 'SUCCESS',
-      metadata: parsed.metadata,
-      irVersion: ir.irVersion,
-      cfgNodeCount: dataflow.blocks.length,
-      fragmentCount: fragments.length,
-      globalFingerprint: fingerprintData.globalFingerprint,
-      rawHashes: fingerprintData.rawHashes,
-      safeDataflow // Sent back for UI rendering
-    });
+    const report = await Promise.race([verificationTask(), timeout(5000)]);
+    res.json(report);
+
   } catch (error) {
-    // Safely trap parser errors (like unsupported syntax)
-    res.status(422).json({ error: error.message, type: error.name });
+    // Deterministic safe errors
+    res.status(422).json({ error: 'Verification failed', details: error.message, type: error.name || 'Error' });
   }
 });
 
-app.post('/api/compare', async (req, res) => {
+// Phase 12: Research Export Endpoint
+app.get('/api/provenance/export', (req, res) => {
   try {
-    const { targetCode, suspectCode } = req.body;
-    if (!targetCode || !suspectCode) {
-      return res.status(400).json({ error: 'Both targetCode and suspectCode are required.' });
+    const fs = require('fs');
+    const path = require('path');
+    const format = req.query.format || 'json';
+    const resultsPath = path.join(__dirname, '../../tests/phase12/corpus/results.json');
+    const detailsPath = path.join(__dirname, '../../tests/phase12/corpus/details.csv');
+
+    if (format === 'csv') {
+      if (!fs.existsSync(detailsPath)) return res.status(404).json({ error: 'CSV not found' });
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="experiments.csv"');
+      return res.send(fs.readFileSync(detailsPath));
+    } else {
+      if (!fs.existsSync(resultsPath)) return res.status(404).json({ error: 'JSON not found' });
+      res.json(JSON.parse(fs.readFileSync(resultsPath, 'utf8')));
     }
-
-    const targetPipeline = runPipeline(targetCode);
-    const suspectPipeline = runPipeline(suspectCode);
-
-    const report = verifyProvenance(targetPipeline.fingerprintData, suspectPipeline.fingerprintData);
-
-    let databaseWarning = !dbConnected;
-
-    if (dbConnected) {
-      try {
-        // Find or create records just for audit logs
-        // For production, these would be linked to real users/projects
-        const trgRec = new AnalysisRecord({ sourceCode: targetCode, globalFingerprint: targetPipeline.fingerprintData.globalFingerprint });
-        const susRec = new AnalysisRecord({ sourceCode: suspectCode, globalFingerprint: suspectPipeline.fingerprintData.globalFingerprint });
-        await Promise.all([trgRec.save(), susRec.save()]);
-
-        const dbReport = new VerificationReport({
-          targetId: trgRec._id,
-          suspectId: susRec._id,
-          status: report.status,
-          confidence: report.confidence,
-          matchedFragments: report.matchedFragments,
-          totalFragments: report.totalFragments
-        });
-        await dbReport.save();
-      } catch (dbErr) {
-        console.error('DB Save Error (Compare):', dbErr.message);
-        databaseWarning = true;
-      }
-    }
-
-    res.json({
-      databaseWarning,
-      status: report.status,
-      confidence: report.confidence,
-      matchedFragments: report.matchedFragments,
-      totalFragments: report.totalFragments,
-      evidence: report.evidence
-    });
   } catch (error) {
-    res.status(422).json({ error: error.message, type: error.name });
+    res.status(500).json({ error: 'Failed to export results', details: error.message });
   }
 });
 
 const PORT = process.env.PORT || 3001;
-
-// ============================================================
-// Phase 11: Provenance Index API Endpoints
-// ============================================================
-const { createIndex } = require('../../packages/provenance-index');
-const provenancePipeline = require('../../packages/provenance-pipeline');
-
-// In-memory provenance index (persists for the lifetime of the server)
-const provenanceIndex = createIndex();
-
-/**
- * POST /api/provenance/index
- * Index source code fragments into the provenance store.
- */
-app.post('/api/provenance/index', (req, res) => {
-  try {
-    const { code, repositoryId, commitHash, filePath } = req.body;
-    if (!code) return res.status(400).json({ error: 'Source code is required.' });
-    if (!repositoryId) return res.status(400).json({ error: 'repositoryId is required.' });
-
-    const analysis = provenancePipeline.analyzeSource(code);
-    if (!analysis.fingerprint) {
-      return res.status(422).json({ error: 'Failed to analyze source code.', details: analysis.error });
-    }
-
-    let indexed = 0;
-    for (let i = 0; i < analysis.fragments.length; i++) {
-      const fp = analysis.fragments[i];
-      if (fp && typeof fp === 'string' && fp.length === 64) {
-        provenanceIndex.addFragment(fp, {
-          fragmentType: 'BasicBlock',
-          canonicalVersion: 'CIPE-9-WLCDH',
-          algorithmVersion: '1.0',
-          repositoryId,
-          commitHash: commitHash || '',
-          filePath: filePath || '',
-          blockIndex: i,
-          dependencyContext: [],
-          controlFlowContext: []
-        });
-        indexed++;
-      }
-    }
-
-    res.json({
-      globalFingerprint: analysis.fingerprint,
-      fragmentCount: analysis.fragments.length,
-      indexedCount: indexed,
-      stats: provenanceIndex.getStats()
-    });
-  } catch (error) {
-    res.status(422).json({ error: error.message, type: error.name });
-  }
-});
-
-/**
- * POST /api/provenance/query
- * Query fragments against the index, return candidates.
- */
-app.post('/api/provenance/query', (req, res) => {
-  try {
-    const { code, fingerprints } = req.body;
-
-    let queryFingerprints = fingerprints;
-    if (code && !fingerprints) {
-      const analysis = provenancePipeline.analyzeSource(code);
-      if (!analysis.fingerprint) {
-        return res.status(422).json({ error: 'Failed to analyze source code.' });
-      }
-      queryFingerprints = analysis.fragments;
-    }
-
-    if (!queryFingerprints || !Array.isArray(queryFingerprints)) {
-      return res.status(400).json({ error: 'Either code or fingerprints array required.' });
-    }
-
-    const batchResults = provenanceIndex.queryBatch(queryFingerprints);
-    const candidates = [];
-    for (const [fp, records] of batchResults) {
-      candidates.push({ fingerprint: fp, matches: records });
-    }
-
-    res.json({
-      queryCount: queryFingerprints.length,
-      matchedCount: candidates.length,
-      candidates,
-      stats: provenanceIndex.getStats()
-    });
-  } catch (error) {
-    res.status(422).json({ error: error.message, type: error.name });
-  }
-});
-
-/**
- * POST /api/provenance/verify
- * Full cryptographic verification between two source code samples.
- */
-app.post('/api/provenance/verify', (req, res) => {
-  try {
-    const { oldSource, newSource } = req.body;
-    if (!oldSource || !newSource) {
-      return res.status(400).json({ error: 'Both oldSource and newSource are required.' });
-    }
-
-    const evidence = provenancePipeline.compareSources(oldSource, newSource);
-    res.json(evidence);
-  } catch (error) {
-    res.status(422).json({ error: error.message, type: error.name });
-  }
-});
-
-/**
- * GET /api/provenance/stats
- * Get current provenance index statistics.
- */
-app.get('/api/provenance/stats', (req, res) => {
-  const stats = provenanceIndex.getStats();
-  const commonFragments = provenanceIndex.identifyCommonFragments(0.3);
-  res.json({ ...stats, commonFragmentCount: commonFragments.length });
-});
-
 app.listen(PORT, () => {
   console.log(`CIPE API Server running on port ${PORT}`);
 });

@@ -1,0 +1,121 @@
+CALL GRAPH: Map(0) {}
+CALL GRAPH: Map(0) {}
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(1) { 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(0) {}
+CALL GRAPH: Map(0) {}
+CALL GRAPH: Map(2) { 'b:0' => Set(0) {}, 'global' => Set(1) { 'require' } }
+CALL GRAPH: Map(2) { 'b:0' => Set(0) {}, 'global' => Set(1) { 'require' } }
+[
+  {
+    "file": "tests/phase6/matrix.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "3d83d99a731ac7e34d4a33aada50c8eac51bbe5852f9d282451fc0a26e207b0a",
+      "fragmentCount": 1,
+      "matchedFragments": [],
+      "addedFragments": [
+        "3b22f76a0c7deb0dc36bbf119944835ea54f60c03735997de1af1718db7bb94a"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 1,
+      "controlFlowChanges": 1,
+      "verificationResult": "NO_MATCH"
+    }
+  },
+  {
+    "file": "tests/phase7/adversarial/runner.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "1f3b62ef3a59f7593b089ae2e20ec31cccf85062d0014d1a8eb6754a02b933ce",
+      "fragmentCount": 1,
+      "matchedFragments": [],
+      "addedFragments": [
+        "cdbb303b1f72202f569f28be5c77a1fe151a4f547098aa666ded0032d3495c5b"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 1,
+      "controlFlowChanges": 1,
+      "verificationResult": "NO_MATCH"
+    }
+  },
+  {
+    "file": "tests/phase7/partial/runner.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "3e4720c8790d522ded495df8bbc703d0685eb2c9993d55175504af9709f526be",
+      "fragmentCount": 1,
+      "matchedFragments": [],
+      "addedFragments": [
+        "b1be376e246b359a551d90e0e3580c06940d448909ff2828919b6a7b23ec9ba6"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 1,
+      "controlFlowChanges": 1,
+      "verificationResult": "NO_MATCH"
+    }
+  },
+  {
+    "file": "tests/phase7/redteam/runner.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "1461e1cc433cb4311c37c7c325221126679dba15364f32b0f953dae329b7c664",
+      "fragmentCount": 1,
+      "matchedFragments": [],
+      "addedFragments": [
+        "5493d345cde5c8e8dcd85d38dad113579cd028ec392b3dc5aaa97dd5095c44ac"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 1,
+      "controlFlowChanges": 1,
+      "verificationResult": "NO_MATCH"
+    }
+  },
+  {
+    "file": "tests/phase7/verifier/reference-verifier/verifier.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "a5479c1297e0a6043d7b9ec7d54db2da0bbadabca471240ae2fc660eb41699b6",
+      "fragmentCount": 1,
+      "matchedFragments": [],
+      "addedFragments": [
+        "8966355f985ee508f34af5e80e6597012c57174c3097ecd9a4d27491a0716d64"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 1,
+      "controlFlowChanges": 1,
+      "verificationResult": "NO_MATCH"
+    }
+  },
+  {
+    "file": "tests/phase7/verifier/runner.js",
+    "evidence": {
+      "canonicalVersion": "CIPE-9-WLCDH",
+      "oldFingerprint": null,
+      "newFingerprint": "2b32c41b8b394eb87de872f6a3fd560c93eab7984f2d53a220769a1a399d772d",
+      "fragmentCount": 5,
+      "matchedFragments": [],
+      "addedFragments": [
+        "19cbb3aedd05b676d2ecc139a5418df290701e6247be2b75aa031f299357d876",
+        "22b399d76350fc07a9e353c9b93b6c47ae30ba2ee964ae5a8a67f27b08fbbf20",
+        "53c985edc10db5f0a1688e0654a0cf9092cff09e2d4c841781011c4dc134bc4e",
+        "7ede654a84e1d2cad23abbf75ab14bbdec7fff3c296d84792da10de92ef70e16",
+        "ce5e0a2b67a13208a61c54ba7c72805ea013845bfcb3685fec34ec6395753ec1"
+      ],
+      "removedFragments": [],
+      "dependencyChanges": 5,
+      "controlFlowChanges": 5,
+      "verificationResult": "NO_MATCH"
+    }
+  }
+]
+STATUS: FAIL

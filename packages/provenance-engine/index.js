@@ -1,72 +1,69 @@
+const { classifyVerification } = require('./verification-model');
+const { buildEvidenceGraph } = require('./evidence-graph');
+const { traceLineage, classifyTransition } = require('./lineage-tracker');
+const { CommonFragmentSuppressor } = require('./common-suppression');
+
 /**
- * Verifies the provenance of a suspect source file against an original target source file
- * by performing a structural set intersection on their cryptographically generated fragment hashes.
- * 
- * @param {Object} targetData - The original source's fingerprint data.
- * @param {Object} suspectData - The suspect source's fingerprint data.
- * @returns {Object} A detailed verification report.
+ * Main Provenance Engine API (Phase 12)
  */
-function verifyProvenance(targetData, suspectData) {
+
+/**
+ * Verifies the provenance of a suspect source file against an original target source file.
+ * Returns a formal classification and a complete evidence graph.
+ * 
+ * @param {Object} targetData - The original source's metadata (repositoryId, commitHash, filePath, fragments)
+ * @param {Object} suspectData - The suspect source's metadata (repositoryId, commitHash, filePath, fragments)
+ * @param {Set<String>} commonFingerprints - Optional set of fingerprints known to be common boilerplate
+ * @returns {Object} A detailed verification report and evidence graph
+ */
+function verifyProvenance(targetData, suspectData, commonFingerprints = new Set()) {
   if (!targetData || !suspectData) {
-    throw new Error('Both target and suspect fingerprint data must be provided.');
+    throw new Error('Both target and suspect data must be provided.');
   }
 
-  // Strict Versioning Check (Phase 3A)
-  if (targetData.hashVersion !== suspectData.hashVersion) {
+  // Strict Versioning Check
+  if (targetData.hashVersion && suspectData.hashVersion && targetData.hashVersion !== suspectData.hashVersion) {
     throw new Error(`Hash version mismatch: Target(${targetData.hashVersion}) vs Suspect(${suspectData.hashVersion})`);
   }
 
-  const targetHashes = new Set(targetData.rawHashes);
-  const suspectHashes = new Set(suspectData.rawHashes);
+  const targetFragments = targetData.fragments || [];
+  const suspectFragments = suspectData.fragments || [];
 
-  const matched = [];
-  const added = [];
-  const missing = [];
+  // Classify
+  const classification = classifyVerification(targetFragments, suspectFragments, commonFingerprints);
 
-  // Find Matched and Added in Suspect
-  for (const suspectFrag of suspectData.fragments) {
-    if (targetHashes.has(suspectFrag.hash)) {
-      matched.push({ hash: suspectFrag.hash, type: suspectFrag.content.type, content: suspectFrag.content });
-    } else {
-      added.push({ hash: suspectFrag.hash, type: suspectFrag.content.type, content: suspectFrag.content });
-    }
-  }
-
-  // Find Missing from Target
-  for (const targetFrag of targetData.fragments) {
-    if (!suspectHashes.has(targetFrag.hash)) {
-      missing.push({ hash: targetFrag.hash, type: targetFrag.content.type, content: targetFrag.content });
-    }
-  }
-
-  const intersectionSize = matched.length;
-  const minFragments = Math.min(targetData.rawHashes.length, suspectData.rawHashes.length);
+  // Extract matched fragments for the graph
+  const targetHashes = new Set(targetFragments.map(f => f.hash));
+  const matchedRare = [];
+  const matchedCommon = [];
   
-  let confidence = 0;
-  if (minFragments > 0) {
-    confidence = intersectionSize / minFragments;
+  for (const s of suspectFragments) {
+    if (targetHashes.has(s.hash)) {
+      if (commonFingerprints.has(s.hash)) matchedCommon.push(s.hash);
+      else matchedRare.push(s.hash);
+    }
   }
 
-  let status = 'NO_MATCH';
-  if (intersectionSize === targetData.rawHashes.length && intersectionSize === suspectData.rawHashes.length) {
-    status = 'EXACT_MATCH';
-  } else if (confidence > 0.1 || intersectionSize > 5) {
-    status = 'PARTIAL_MATCH';
-  }
+  // Build Graph
+  const evidenceGraph = buildEvidenceGraph(targetData, suspectData, classification, matchedRare, matchedCommon);
 
   return {
-    status,
-    confidence,
-    matchedFragments: intersectionSize,
-    totalFragments: minFragments,
-    evidence: {
-      matched,
-      added,
-      missing
-    }
+    status: classification.status,
+    reasoning: classification.reasoning,
+    matchedFragments: matchedRare.length + matchedCommon.length,
+    rareMatched: matchedRare.length,
+    commonMatched: matchedCommon.length,
+    totalTargetFragments: targetFragments.length,
+    totalSuspectFragments: suspectFragments.length,
+    evidenceGraph
   };
 }
 
 module.exports = {
-  verifyProvenance
+  verifyProvenance,
+  classifyVerification,
+  buildEvidenceGraph,
+  traceLineage,
+  classifyTransition,
+  CommonFragmentSuppressor
 };

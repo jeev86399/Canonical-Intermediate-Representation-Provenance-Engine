@@ -14,10 +14,10 @@ export async function analyzeCode(code) {
 }
 
 export async function compareCode(targetCode, suspectCode) {
-  const res = await fetch(`${API_BASE}/compare`, {
+  const res = await fetch(`${API_BASE}/provenance/verify`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ targetCode, suspectCode })
+    body: JSON.stringify({ targetSource: targetCode, suspectSource: suspectCode })
   });
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));

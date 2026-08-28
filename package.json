@@ -13,6 +13,7 @@
     "verify": "node tests/experiments/run-experiments.js",
     "verify:phase10": "node tests/phase10/run.js",
     "verify:phase11": "node tests/phase11/run.js",
+    "verify:phase12": "node tests/phase12/run.js",
     "verify:repository": "node scripts/verify-repository.js"
   },
   "keywords": [],
