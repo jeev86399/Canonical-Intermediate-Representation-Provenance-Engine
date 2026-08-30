@@ -1,0 +1,17 @@
+{
+  "totalPairs": 1050,
+  "CIPE_Metrics": {
+    "TRUE_POSITIVES": 583,
+    "TRUE_NEGATIVES": 25,
+    "FALSE_POSITIVES": 90,
+    "FALSE_NEGATIVES": 352,
+    "PRECISION": "0.8663",
+    "RECALL": "0.6235",
+    "F1": "0.7251"
+  },
+  "Baseline_Matches": {
+    "SHA256": 315,
+    "Tokens": 315,
+    "AST_Nodes": 224
+  }
+}

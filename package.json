@@ -12,8 +12,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "verify": "node tests/experiments/run-experiments.js",
     "verify:phase10": "node tests/phase10/run.js",
-    "verify:phase11": "node tests/phase11/run.js",
+    "verify:phase11": "node tests/phase11/diff-mode.js",
     "verify:phase12": "node tests/phase12/run.js",
+    "verify:phase13": "node tests/phase13/run.js",
     "verify:repository": "node scripts/verify-repository.js"
   },
   "keywords": [],
@@ -21,5 +22,8 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^30.4.2"
+  },
+  "dependencies": {
+    "uuid": "^14.0.2"
   }
 }

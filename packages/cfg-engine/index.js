@@ -222,7 +222,6 @@ function generateCFG(canonicalIr) {
     return false;
   }
 
-  console.log('CALL GRAPH:', callGraph);
   for (const funcName of callGraph.keys()) {
     detectCycle(funcName);
   }

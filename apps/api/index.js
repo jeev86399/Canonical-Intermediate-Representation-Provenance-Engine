@@ -41,6 +41,10 @@ const { generateFingerprint } = require('../../packages/fingerprint-engine');
 // Phase 12 Provenance Engine
 const { verifyProvenance } = require('../../packages/provenance-engine');
 
+// Phase 13 Job Engine
+const jobEngine = require('../../packages/job-engine');
+jobEngine.recoverJobs();
+
 const app = express();
 app.use(express.json({ limit: '50kb' }));
 app.use(cors());
@@ -132,6 +136,48 @@ app.get('/api/provenance/export', (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to export results', details: error.message });
   }
+});
+
+// Phase 13 Job Endpoints
+app.post('/api/repositories/analyze', (req, res) => {
+  const { repository, commit } = req.body;
+  if (!repository) return res.status(400).json({ error: 'repository required' });
+  
+  const job = jobEngine.createJob(repository, commit);
+  res.json({ jobId: job.jobId, status: job.status, cached: !!job.cached });
+});
+
+app.get('/api/jobs/:id', (req, res) => {
+  const job = jobEngine.getJob(req.params.id);
+  if (!job) return res.status(404).json({ error: 'Job not found' });
+  res.json(job);
+});
+
+app.post('/api/jobs/:id/cancel', (req, res) => {
+  const success = jobEngine.cancelJob(req.params.id);
+  if (!success) return res.status(404).json({ error: 'Job not found' });
+  res.json({ success: true, status: 'CANCELLED' });
+});
+
+app.get('/api/jobs/:id/progress', (req, res) => {
+  const job = jobEngine.getJob(req.params.id);
+  if (!job) return res.status(404).json({ error: 'Job not found' });
+  res.json({ progress: job.progress, status: job.status });
+});
+
+app.get('/api/jobs/:id/result', (req, res) => {
+  const job = jobEngine.getJob(req.params.id);
+  if (!job) return res.status(404).json({ error: 'Job not found' });
+  if (job.status !== 'COMPLETED') return res.status(400).json({ error: 'Job not completed' });
+  res.json(job.result);
+});
+
+app.post('/api/provenance/query', (req, res) => {
+  res.status(501).json({ error: 'Not implemented in this demo route. Use analyze route.' });
+});
+
+app.get('/api/repositories/:id/history', (req, res) => {
+  res.json({ history: [] }); // Stub for API compliance
 });
 
 const PORT = process.env.PORT || 3001;

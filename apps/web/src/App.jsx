@@ -3,6 +3,7 @@ import { Hexagon, Code2, GitCompare } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import CodeEditor from './pages/CodeEditor';
 import VerificationPage from './pages/VerificationPage';
+import JobDashboard from './pages/JobDashboard';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         </Link>
         <div className="nav-links">
           <Link to="/">Dashboard</Link>
+          <Link to="/jobs">Job Engine</Link>
           <Link to="/upload">Code Editor</Link>
           <Link to="/verify">Provenance Verifier</Link>
         </div>
@@ -22,6 +24,7 @@ function App() {
       <main className="page-container animate-fade-in">
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/jobs" element={<JobDashboard />} />
           <Route path="/upload" element={<CodeEditor />} />
           <Route path="/verify" element={<VerificationPage />} />
         </Routes>
