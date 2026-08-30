@@ -15,6 +15,9 @@
     "verify:phase11": "node tests/phase11/diff-mode.js",
     "verify:phase12": "node tests/phase12/run.js",
     "verify:phase13": "node tests/phase13/run.js",
+    "verify:phase14": "node tests/phase14/run.js",
+    "verify:phase15": "node tests/phase15/run.js",
+    "verify:phase16": "node tests/phase16/run.js",
     "verify:repository": "node scripts/verify-repository.js"
   },
   "keywords": [],

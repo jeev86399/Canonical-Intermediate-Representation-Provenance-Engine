@@ -1,0 +1,1 @@
+function func39() { return 39; }

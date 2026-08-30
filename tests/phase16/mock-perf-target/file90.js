@@ -1,0 +1,1 @@
+function func90() { return 90; }

@@ -1,0 +1,1 @@
+function func5() { return 5; }

@@ -55,6 +55,46 @@ function createJob(repository, commit) {
   return job;
 }
 
+function createCompareJob(baseRepoPath, targetRepoPath) {
+  const identity = calculateAnalysisIdentity({ baseRepoPath, targetRepoPath });
+  
+  if (analysisCache.has(identity)) {
+    const cachedJobId = analysisCache.get(identity);
+    const cachedJob = jobs.get(cachedJobId);
+    if (cachedJob && (cachedJob.status === 'COMPLETED' || cachedJob.status === 'RUNNING')) {
+      return { ...cachedJob, cached: true };
+    }
+  }
+
+  const job = {
+    jobId: uuidv4(),
+    type: 'COMPARE',
+    baseRepoPath,
+    targetRepoPath,
+    createdAt: Date.now(),
+    startedAt: null,
+    completedAt: null,
+    status: 'QUEUED',
+    progress: 0,
+    error: null,
+    result: null,
+    identity,
+    telemetry: {
+      queueTime: 0,
+      executionTime: 0,
+      stageDurations: {}
+    }
+  };
+
+  jobs.set(job.jobId, job);
+  analysisCache.set(identity, job.jobId);
+  
+  queue.push(job.jobId);
+  processQueue();
+  
+  return job;
+}
+
 function processQueue() {
   if (activeJobs >= limits.MAX_CONCURRENCY) return;
   if (queue.length === 0) return;
@@ -75,14 +115,28 @@ function startJob(job) {
   job.startedAt = Date.now();
   job.telemetry.queueTime = job.startedAt - job.createdAt;
 
-  // Run in a worker thread for isolation (Part 13)
-  const worker = new Worker(path.join(__dirname, 'worker.js'), {
-    workerData: {
+  // Run in a worker thread for isolation
+  let workerFile = 'worker.js';
+  let workerDataPayload = {};
+
+  if (job.type === 'COMPARE') {
+    workerFile = 'compare-worker.js';
+    workerDataPayload = {
+      jobId: job.jobId,
+      baseRepoPath: job.baseRepoPath,
+      targetRepoPath: job.targetRepoPath
+    };
+  } else {
+    workerDataPayload = {
       jobId: job.jobId,
       repository: job.repository,
       commit: job.commit,
       limits
-    }
+    };
+  }
+
+  const worker = new Worker(path.join(__dirname, workerFile), {
+    workerData: workerDataPayload
   });
 
   const timeoutId = setTimeout(() => {
@@ -206,6 +260,7 @@ function recoverJobs() {
 
 module.exports = {
   createJob,
+  createCompareJob,
   getJob,
   cancelJob,
   recoverJobs

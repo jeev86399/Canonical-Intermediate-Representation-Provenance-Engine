@@ -1,0 +1,1 @@
+function func45() { return 45; }

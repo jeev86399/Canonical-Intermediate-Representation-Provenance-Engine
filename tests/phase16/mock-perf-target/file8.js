@@ -1,0 +1,1 @@
+function func8() { return 8; }

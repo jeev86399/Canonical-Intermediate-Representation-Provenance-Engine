@@ -12,7 +12,7 @@ function createManifest(data) {
   const manifestCore = {
     repository: data.repository,
     commit: data.commit,
-    cipeVersion: '1.0.0',
+    cipeVersion: '14.0.0',
     canonicalIRVersion: 'CIPE-IR-1',
     fingerprintVersion: 'WLCDH-K2',
     toolVersion: 'Node-24',

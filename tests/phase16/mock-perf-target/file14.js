@@ -1,0 +1,1 @@
+function func14() { return 14; }

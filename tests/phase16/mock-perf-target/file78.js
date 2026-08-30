@@ -1,0 +1,1 @@
+function func78() { return 78; }

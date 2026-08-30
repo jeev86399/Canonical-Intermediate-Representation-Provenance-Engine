@@ -1,0 +1,1 @@
+function func16() { return 16; }

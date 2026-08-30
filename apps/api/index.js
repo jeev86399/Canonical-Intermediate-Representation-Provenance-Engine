@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 
 // Phase 12 Rate Limiter (Memory-based token bucket)
 const rateLimits = new Map();
@@ -138,46 +139,141 @@ app.get('/api/provenance/export', (req, res) => {
   }
 });
 
-// Phase 13 Job Endpoints
-app.post('/api/repositories/analyze', (req, res) => {
+// Phase 15/16 Evidence & Audit
+const { VerificationAuditLog } = require('../../packages/verification-engine/audit');
+const auditLog = new VerificationAuditLog(path.join(__dirname, 'audit.log'));
+
+// Phase 13 Job Endpoints (Updated for Phase 16)
+app.post('/api/analyze', (req, res) => {
+  try {
+    const { source } = req.body;
+    if (!source) return res.status(400).json({ error: 'INVALID_INPUT', details: 'source is required' });
+    
+    const pipeline = runPipeline(source, 'analyze.js');
+    res.json({
+      status: 'COMPLETED',
+      result: {
+        fileCount: 1,
+        fragmentCount: pipeline.fragments.length,
+        fragments: pipeline.fingerprintData.fragments.map(f => ({ hash: f.hash, type: f.type }))
+      }
+    });
+  } catch (err) {
+    res.status(422).json({ error: 'ANALYSIS_ERROR', details: err.message });
+  }
+});
+
+app.post('/api/analyze-repository', (req, res) => {
   const { repository, commit } = req.body;
-  if (!repository) return res.status(400).json({ error: 'repository required' });
+  if (!repository) return res.status(400).json({ error: 'INVALID_INPUT', details: 'repository required' });
   
   const job = jobEngine.createJob(repository, commit);
   res.json({ jobId: job.jobId, status: job.status, cached: !!job.cached });
 });
 
+app.post('/api/compare-repositories', (req, res) => {
+  const { baseRepoPath, targetRepoPath } = req.body;
+  if (!baseRepoPath || !targetRepoPath) {
+    return res.status(400).json({ error: 'INVALID_INPUT', details: 'baseRepoPath and targetRepoPath required' });
+  }
+
+  // Basic path traversal sanity check before passing to engine
+  if (baseRepoPath.includes('..') || targetRepoPath.includes('..')) {
+    return res.status(403).json({ error: 'PATH_SECURITY_VIOLATION' });
+  }
+  
+  const job = jobEngine.createCompareJob(baseRepoPath, targetRepoPath);
+  res.json({ jobId: job.jobId, status: job.status, cached: !!job.cached });
+});
+
 app.get('/api/jobs/:id', (req, res) => {
   const job = jobEngine.getJob(req.params.id);
-  if (!job) return res.status(404).json({ error: 'Job not found' });
+  if (!job) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Job not found' });
   res.json(job);
 });
 
 app.post('/api/jobs/:id/cancel', (req, res) => {
   const success = jobEngine.cancelJob(req.params.id);
-  if (!success) return res.status(404).json({ error: 'Job not found' });
+  if (!success) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Job not found' });
   res.json({ success: true, status: 'CANCELLED' });
 });
 
 app.get('/api/jobs/:id/progress', (req, res) => {
   const job = jobEngine.getJob(req.params.id);
-  if (!job) return res.status(404).json({ error: 'Job not found' });
+  if (!job) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Job not found' });
   res.json({ progress: job.progress, status: job.status });
 });
 
+// Store completed verification receipts for history
+const verificationHistory = new Map();
+
 app.get('/api/jobs/:id/result', (req, res) => {
   const job = jobEngine.getJob(req.params.id);
-  if (!job) return res.status(404).json({ error: 'Job not found' });
-  if (job.status !== 'COMPLETED') return res.status(400).json({ error: 'Job not completed' });
+  if (!job) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Job not found' });
+  if (job.status !== 'COMPLETED') return res.status(400).json({ error: 'VERIFICATION_ERROR', details: 'Job not completed' });
+  
+  // If it's a COMPARE job, append to audit log automatically on first retrieve
+  if (job.type === 'COMPARE' && job.result && job.result.receipt && !job.audited) {
+    try {
+      const chainHash = auditLog.append(job.result.receipt);
+      job.result.auditHash = chainHash;
+      job.audited = true;
+      // Save to history
+      verificationHistory.set(job.result.receipt.verificationId, {
+        jobId: job.jobId,
+        receipt: job.result.receipt,
+        auditHash: chainHash
+      });
+    } catch(e) {
+      console.error('Audit log error', e);
+    }
+  }
+
   res.json(job.result);
 });
 
+app.get('/api/verification/history', (req, res) => {
+  const history = Array.from(verificationHistory.values()).map(entry => ({
+    verificationId: entry.receipt.verificationId,
+    timestamp: entry.receipt.generatedAt,
+    classification: entry.receipt.result,
+    engineVersion: entry.receipt.engineVersion,
+    auditHash: entry.auditHash
+  }));
+  res.json({ history, source: 'IN_MEMORY' });
+});
+
+app.get('/api/verification/audit', (req, res) => {
+  try {
+    const isValid = auditLog.verifyLogIntegrity();
+    res.json({ 
+      status: isValid ? 'AUDIT_CHAIN_VALID' : 'AUDIT_CHAIN_INVALID',
+      lastHash: auditLog._getLastHash()
+    });
+  } catch(e) {
+    res.status(500).json({ error: 'INTERNAL_ERROR', details: 'Failed to verify audit log' });
+  }
+});
+
+app.get('/api/verification/:id', (req, res) => {
+  const entry = verificationHistory.get(req.params.id);
+  if (!entry) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Verification not found' });
+  res.json(entry.receipt.manifest);
+});
+
+app.get('/api/verification/:id/receipt', (req, res) => {
+  const entry = verificationHistory.get(req.params.id);
+  if (!entry) return res.status(404).json({ error: 'INVALID_INPUT', details: 'Verification not found' });
+  res.json(entry.receipt);
+});
+
+// Phase 12 legacy endpoints...
 app.post('/api/provenance/query', (req, res) => {
   res.status(501).json({ error: 'Not implemented in this demo route. Use analyze route.' });
 });
 
 app.get('/api/repositories/:id/history', (req, res) => {
-  res.json({ history: [] }); // Stub for API compliance
+  res.json({ history: [] }); 
 });
 
 const PORT = process.env.PORT || 3001;

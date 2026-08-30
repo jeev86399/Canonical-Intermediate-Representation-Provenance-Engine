@@ -1,0 +1,1 @@
+function func38() { return 38; }

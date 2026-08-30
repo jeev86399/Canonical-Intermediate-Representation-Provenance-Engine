@@ -1,0 +1,1 @@
+function func56() { return 56; }

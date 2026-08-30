@@ -1,0 +1,1 @@
+function func35() { return 35; }

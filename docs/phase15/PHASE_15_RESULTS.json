@@ -1,0 +1,17 @@
+[
+  {
+    "files": 10,
+    "durationMs": "50.41",
+    "fragments": 22
+  },
+  {
+    "files": 100,
+    "durationMs": "169.95",
+    "fragments": 202
+  },
+  {
+    "files": 500,
+    "durationMs": "441.68",
+    "fragments": 1002
+  }
+]

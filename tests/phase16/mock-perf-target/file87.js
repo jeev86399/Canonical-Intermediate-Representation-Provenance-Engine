@@ -1,0 +1,1 @@
+function func87() { return 87; }

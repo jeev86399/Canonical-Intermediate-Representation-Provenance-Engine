@@ -1,0 +1,1 @@
+function func99() { return 99; }

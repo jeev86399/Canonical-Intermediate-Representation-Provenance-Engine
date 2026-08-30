@@ -1,0 +1,1 @@
+function func64() { return 64; }

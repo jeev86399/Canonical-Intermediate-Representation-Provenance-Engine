@@ -1,0 +1,1 @@
+function func50() { return 50; }
